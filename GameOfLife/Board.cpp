@@ -102,6 +102,12 @@ void Board::nextGeneration()
     }
 }
 
+void Board::runSingleThreaded(int numberOfGenerations) {
+    for(int i=0; i<numberOfGenerations; i++) {
+        nextGeneration();
+    }
+}
+
 std::string Board::toString() const {
     std::string s = std::to_string(m_colCount) + "," + std::to_string(m_rowCount) + "\n";
     for(int rowIdx = 0; rowIdx < m_rowCount; rowIdx++) {

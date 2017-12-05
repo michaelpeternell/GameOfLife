@@ -28,7 +28,10 @@ public:
     inline bool getCell(int row, int col) const { return m_cells[row*m_colCount + col] & 1; };
     void setCell(int row, int col, bool val);
     
+    /// Single-threaded: make next generation
     void nextGeneration();
+    
+    void runSingleThreaded(int numberOfGenerations);
     
     std::string toString() const;
     
