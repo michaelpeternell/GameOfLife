@@ -9,12 +9,11 @@
 #ifndef Board_h
 #define Board_h
 
+#include "gol-config.h"
 #include <stdio.h>
 #include <vector>
 #include <string>
 
-#define BOARD_ALIVE_BIT 0x01
-#define BOARD_NEIGH_MASK 0x0E
 
 class Board
 {
@@ -50,6 +49,15 @@ private:
     int m_rowCount = 0;
     int m_colCount = 0;
     std::vector<char> m_cells;
+
+	// About the memory layout:
+	// Each element (char) of m_cells represents one cell on the board.
+	// The lowest bit says if the cell is 'alive'.
+	// Bits 1-4 is the neighbour-count. It says how many neighbours a cell has.
+	// E.g. 000001001
+	//      ........1 => cell is alive
+	//      ....0100. => it has 4 neighbours
+	// => the cell will die in the next generation because it is alive and has more than 3 neighbours.
 };
 
 bool operator==(const Board& b1, const Board& b2);

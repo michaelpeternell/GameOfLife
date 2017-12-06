@@ -6,6 +6,8 @@
 //  Copyright © 2017 Michael Peternell. All rights reserved.
 //
 
+
+#include "gol-config.h"
 #include "Board.h"
 #include <map>
 #include <string>

@@ -13,7 +13,7 @@ See [LICENSE.md](LICENSE.md) for details.
 
 ## Usage
 
-This is a command line tool (currently only for Mac, but a Windows version will come soon.)
+This is a command line tool (running on Windows and macOS.)
 
 ### Command line parameters:
 
@@ -53,6 +53,12 @@ Example:
 ..xx..
 ......
 ```
+
+### Compiling
+
+You need either Xcode or Visual Studio.
+
+It has been tested with Xcode 9 and with Visual Studio 2017
 
 ## Some example test data
 

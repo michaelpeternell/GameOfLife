@@ -1,3 +1,13 @@
+# For Windows
+
+ipch/
+Browse.VC.db
+Browse.VC.opendb
+Debug/
+Release/
+.suo
+
+
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
