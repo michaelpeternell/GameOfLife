@@ -20,4 +20,14 @@
 // I think fopen() is perfectly safe. We're grown up, be silent VC++ !!
 #define _CRT_SECURE_NO_WARNINGS 1
 
+#ifdef _WIN32
+#define GOL_WIN_ONLY 1
+#define GOL_MAC_ONLY 0
+#else
+#define GOL_WIN_ONLY 0
+#define GOL_MAC_ONLY 1
+#endif
+
+#define USE_OPENMP GOL_WIN_ONLY
+
 #endif // GameOfLife_gol_config_h

@@ -109,44 +109,44 @@ void Board::clearCell_unsafe(int row, int col) {
 void Board::nextGeneration()
 {
     std::vector<char> oldCells = m_cells;
-    nextGeneration(&oldCells[0]);
+    nextGeneration(&oldCells[0], 0, m_rowCount);
 }
 
-void Board::nextGeneration(char* oldCells)
+void Board::nextGeneration(char* oldCells, int rowBegin, int rowEnd)
 {
-    int idx = 0;
-    for(int row=0; row<m_rowCount; row++) {
-        for(int col=0; col<m_colCount; col++, idx++) {
-            char val = oldCells[idx];
-            switch(val) {
-                case 0: // not set, no neighbours
-                case 2: // not set, 1 neighbour
-                case 4: // not set, 2 neighbours
-                case 5: // set, 2 neighbours
-                case 7: // set, 3 neighbours
-                case 8: // not set, 4 neighbours
-                case 10: // not set, 5 neighbours
-                case 12: // not set, 6 neighbours
-                case 14: // not set, 7 neighbours
-                case 16: // not set, 8 neighbours
-                    break;
-                    
-                case 6: // not set, 3 neighbours
-                    setCell_unsafe(row, col);
-                    break;
-                
-                case 1: // set, no neighbours
-                case 3: // set, 1 neighbour
-                case 9: // set, 4 neighbours
-                case 11: // set, 5 neighbours
-                case 13: // set, 6 neighbours
-                case 15: // set, 7 neighbours
-                case 17: // set, 8 neighbours
-                    clearCell_unsafe(row, col);
-                    break;
-            }
-        }
-    }
+	int idx = rowBegin * m_colCount;
+	for (int row = rowBegin; row<rowEnd; row++) {
+		for (int col = 0; col<m_colCount; col++, idx++) {
+			char val = oldCells[idx];
+			switch (val) {
+			case 0: // not set, no neighbours
+			case 2: // not set, 1 neighbour
+			case 4: // not set, 2 neighbours
+			case 5: // set, 2 neighbours
+			case 7: // set, 3 neighbours
+			case 8: // not set, 4 neighbours
+			case 10: // not set, 5 neighbours
+			case 12: // not set, 6 neighbours
+			case 14: // not set, 7 neighbours
+			case 16: // not set, 8 neighbours
+				break;
+
+			case 6: // not set, 3 neighbours
+				setCell_unsafe(row, col);
+				break;
+
+			case 1: // set, no neighbours
+			case 3: // set, 1 neighbour
+			case 9: // set, 4 neighbours
+			case 11: // set, 5 neighbours
+			case 13: // set, 6 neighbours
+			case 15: // set, 7 neighbours
+			case 17: // set, 8 neighbours
+				clearCell_unsafe(row, col);
+				break;
+			}
+		}
+	}
 }
 
 void Board::runSingleThreaded(int numberOfGenerations) {
@@ -156,9 +156,55 @@ void Board::runSingleThreaded(int numberOfGenerations) {
 		if (i != 0) {
 			memcpy(&oldCells[0], &m_cells[0], size);
 		}
-        nextGeneration(&oldCells[0]);
+        nextGeneration(&oldCells[0], 0, m_rowCount);
     }
 }
+
+#if USE_OPENMP
+void Board::runOpenMP(int numberOfGenerations)
+{
+	const int NumberOfThreads = 4;
+
+	if (m_rowCount < (NumberOfThreads*3+2)) {
+		runSingleThreaded(numberOfGenerations);
+		return;
+	}
+
+	std::vector<int> slicesBegin;
+	std::vector<int> slicesEnd;
+	std::vector<int> edgeRows;
+
+	for (int i = 0; i < NumberOfThreads; i++) {
+		slicesBegin.push_back(m_rowCount * i / NumberOfThreads + 2);
+	}
+	for (int i = 0; i < NumberOfThreads-1; i++) {
+		slicesEnd.push_back(slicesBegin[i + 1] - 2);
+	}
+	slicesEnd.push_back(m_rowCount);
+	for (int i = 0; i < NumberOfThreads; i++) {
+		int row = slicesBegin[i];
+		edgeRows.push_back(row - 2);
+		edgeRows.push_back(row - 1);
+	}
+
+	std::vector<char> oldCells = m_cells;
+	size_t size = oldCells.size();
+	for (int gIdx = 0; gIdx < numberOfGenerations; gIdx++) {
+		if (gIdx != 0) {
+			memcpy(&oldCells[0], &m_cells[0], size);
+		}
+
+		#pragma omp parallel for
+		for (int i = 0; i < NumberOfThreads; i++) {
+			nextGeneration(&oldCells[0], slicesBegin[i], slicesEnd[i]);
+		}
+
+		for (auto row : edgeRows) {
+			nextGeneration(&oldCells[0], row, row + 1);
+		}
+	}
+}
+#endif
 
 std::string Board::toString() const {
     std::string s = std::to_string(m_colCount) + "," + std::to_string(m_rowCount) + "\n";

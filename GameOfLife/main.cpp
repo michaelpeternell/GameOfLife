@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <chrono>
 #include <ctime>
@@ -64,7 +65,7 @@ private:
     string arg_load;
     string arg_save;
     string arg_verify;
-    string arg_mode;
+    string arg_mode = "seq";
     int arg_generations = -1;
     bool arg_measure = false;
     bool arg_verbose = false;
@@ -114,7 +115,18 @@ int Main::run(int argc, char **argv)
     
     timeStartKernelRunPhase = high_resolution_clock::now();
     
-    board.runSingleThreaded(arg_generations);
+	if (arg_mode == "seq") {
+		board.runSingleThreaded(arg_generations);
+	}
+#if USE_OPENMP
+	else if (arg_mode == "openmp") {
+		board.runOpenMP(arg_generations);
+	}
+#endif
+	else {
+		fail("Internal error: unsupported mode " + arg_mode);
+	}
+    
     
     //
     // Finalization time
@@ -195,10 +207,21 @@ bool Main::parseArguments(int argc, char **argv) {
             arg_mode = val;
             myAssert(hasValue, "Missing argument after " + key);
             i++;
-            if (arg_mode != "seq") {
-                cout << "Error: invalid mode param\n";
-                return false;
-            }
+
+			std::transform(arg_mode.begin(), arg_mode.end(), arg_mode.begin(), ::tolower);
+
+			if (arg_mode == "seq") {
+				// Ok
+			}
+#if USE_OPENMP
+			else if (arg_mode == "openmp") {
+				// Ok
+			}
+#endif
+			else {
+				cout << "Error: invalid mode param\n";
+				return false;
+			}
         }
         else if (key == "--measure") {
             arg_measure = true;

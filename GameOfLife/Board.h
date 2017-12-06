@@ -29,14 +29,18 @@ public:
     
     void nextGeneration();
     void runSingleThreaded(int numberOfGenerations);
+
+#if USE_OPENMP
+	void runOpenMP(int numberOfGenerations);
+#endif
     
     std::string toString() const;
     
     friend bool operator==(const Board& b1, const Board& b2);
     
 private:
-	/// Single-threaded: make next generation
-	void nextGeneration(char* oldCells);
+	/// Runs on a slice of the data. Slicing is for OpenMP.
+	void nextGeneration(char* oldCells, int rowBegin, int rowEnd);
 
 	/// Sets cell to 'alive', assuming its dead
 	void setCell_unsafe(int row, int col);
