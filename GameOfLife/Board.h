@@ -27,9 +27,6 @@ public:
     inline bool getCell(int row, int col) const { return m_cells[row*m_colCount + col] & 1; };
     void setCell(int row, int col, bool val);
     
-    /// Single-threaded: make next generation
-    void nextGeneration();
-    
     void runSingleThreaded(int numberOfGenerations);
     
     std::string toString() const;
@@ -37,8 +34,11 @@ public:
     friend bool operator==(const Board& b1, const Board& b2);
     
 private:
-    /// Sets cell to 'alive', assuming its dead
-    void setCell_unsafe(int row, int col);
+	/// Single-threaded: make next generation
+	void nextGeneration(char* oldCells);
+
+	/// Sets cell to 'alive', assuming its dead
+	void setCell_unsafe(int row, int col);
     /// Sets cell to 'dead', assuming its alive
     void clearCell_unsafe(int row, int col);
     

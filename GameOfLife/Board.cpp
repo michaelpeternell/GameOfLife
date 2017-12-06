@@ -27,42 +27,87 @@ void Board::setCell(int row, int col, bool val) {
 }
 
 void Board::setCell_unsafe(int row, int col) {
-    int rowMinus1 = row == 0 ? m_rowCount-1 : row - 1;
-    int rowPlus1 = row == (m_rowCount-1) ? 0 : row + 1;
-    int colMinus1 = col == 0 ? m_colCount-1 : col - 1;
-    int colPlus1 = col == (m_colCount-1) ? 0 : col + 1;
-    
-    m_cells[getIndex(rowMinus1, colMinus1)] += 2;
-    m_cells[getIndex(rowMinus1, col)] += 2;
-    m_cells[getIndex(rowMinus1, colPlus1)] += 2;
-    m_cells[getIndex(row, colMinus1)] += 2;
-    m_cells[getIndex(row, col)] |= 1;
-    m_cells[getIndex(row, colPlus1)] += 2;
-    m_cells[getIndex(rowPlus1, colMinus1)] += 2;
-    m_cells[getIndex(rowPlus1, col)] += 2;
-    m_cells[getIndex(rowPlus1, colPlus1)] += 2;
+	char* ptr = &m_cells[row*m_colCount + col];
+
+	int rAboveOffset, rBelowOffset, cLeftOffset, cRightOffset;
+	if (row == 0) {
+		rAboveOffset = (int)m_cells.size() - m_colCount;
+	}
+	else {
+		rAboveOffset = -m_colCount;
+	}
+	if (row == (m_rowCount - 1)) {
+		rBelowOffset = -(int)m_cells.size() + m_colCount;
+	}
+	else {
+		rBelowOffset = +m_colCount;
+	}
+	if (col == 0) {
+		cLeftOffset = m_colCount - 1;
+	}
+	else {
+		cLeftOffset = -1;
+	}
+	if (col == (m_colCount - 1)) {
+		cRightOffset = -m_colCount + 1;
+	}
+	else {
+		cRightOffset = +1;
+	}
+
+	ptr[rAboveOffset + cLeftOffset] += 2;
+	ptr[rAboveOffset] += 2;
+	ptr[rAboveOffset + cRightOffset] += 2;
+	ptr[cLeftOffset] += 2;
+	ptr[0] |= 1;
+	ptr[cRightOffset] += 2;
+	ptr[rBelowOffset + cLeftOffset] += 2;
+	ptr[rBelowOffset] += 2;
+	ptr[rBelowOffset + cRightOffset] += 2;
 }
 
 void Board::clearCell_unsafe(int row, int col) {
-    int rowMinus1 = row == 0 ? m_rowCount-1 : row - 1;
-    int rowPlus1 = row == (m_rowCount-1) ? 0 : row + 1;
-    int colMinus1 = col == 0 ? m_colCount-1 : col - 1;
-    int colPlus1 = col == (m_colCount-1) ? 0 : col + 1;
-    
-    m_cells[getIndex(rowMinus1, colMinus1)] -= 2;
-    m_cells[getIndex(rowMinus1, col)] -= 2;
-    m_cells[getIndex(rowMinus1, colPlus1)] -= 2;
-    m_cells[getIndex(row, colMinus1)] -= 2;
-    m_cells[getIndex(row, col)] &= 0xFE;
-    m_cells[getIndex(row, colPlus1)] -= 2;
-    m_cells[getIndex(rowPlus1, colMinus1)] -= 2;
-    m_cells[getIndex(rowPlus1, col)] -= 2;
-    m_cells[getIndex(rowPlus1, colPlus1)] -= 2;
+	char* ptr = &m_cells[row*m_colCount + col];
+
+	int rAboveOffset, rBelowOffset, cLeftOffset, cRightOffset;
+	if (row == 0) {
+		rAboveOffset = (int)m_cells.size() - m_colCount;
+	}
+	else {
+		rAboveOffset = -m_colCount;
+	}
+	if (row == (m_rowCount - 1)) {
+		rBelowOffset = -(int)m_cells.size() + m_colCount;
+	}
+	else {
+		rBelowOffset = +m_colCount;
+	}
+	if (col == 0) {
+		cLeftOffset = m_colCount - 1;
+	}
+	else {
+		cLeftOffset = -1;
+	}
+	if (col == (m_colCount - 1)) {
+		cRightOffset = -m_colCount + 1;
+	}
+	else {
+		cRightOffset = +1;
+	}
+
+	ptr[rAboveOffset + cLeftOffset] -= 2;
+	ptr[rAboveOffset] -= 2;
+	ptr[rAboveOffset + cRightOffset] -= 2;
+	ptr[cLeftOffset] -= 2;
+	ptr[0] &= 0xFE;
+	ptr[cRightOffset] -= 2;
+	ptr[rBelowOffset + cLeftOffset] -= 2;
+	ptr[rBelowOffset] -= 2;
+	ptr[rBelowOffset + cRightOffset] -= 2;
 }
 
-void Board::nextGeneration()
+void Board::nextGeneration(char* oldCells)
 {
-    std::vector<char> oldCells = m_cells;
     int idx = 0;
     for(int row=0; row<m_rowCount; row++) {
         for(int col=0; col<m_colCount; col++, idx++) {
@@ -93,18 +138,19 @@ void Board::nextGeneration()
                 case 17: // set, 8 neighbours
                     clearCell_unsafe(row, col);
                     break;
-                    
-                default:
-                    //printf("Oh noes\n");
-                    break;
             }
         }
     }
 }
 
 void Board::runSingleThreaded(int numberOfGenerations) {
+	std::vector<char> oldCells = m_cells;
+	size_t size = oldCells.size();
     for(int i=0; i<numberOfGenerations; i++) {
-        nextGeneration();
+		if (i != 0) {
+			memcpy(&oldCells[0], &m_cells[0], size);
+		}
+        nextGeneration(&oldCells[0]);
     }
 }
 
