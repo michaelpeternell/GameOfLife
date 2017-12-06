@@ -34,11 +34,20 @@ public:
 	void runOpenMP(int numberOfGenerations);
 #endif
     
+#if USE_OPENCL
+    void runOpenCL(int numberOfGenerations);
+#endif
+    
     std::string toString() const;
+    
+    bool isVerbose() const { return m_verbose; };
+    void setVerbose(bool v) { m_verbose = v; };
     
     friend bool operator==(const Board& b1, const Board& b2);
     
 private:
+    bool m_verbose = false;
+    
 	/// Runs on a slice of the data. Slicing is for OpenMP.
 	void nextGeneration(char* oldCells, int rowBegin, int rowEnd);
 

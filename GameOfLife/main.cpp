@@ -94,6 +94,7 @@ int Main::run(int argc, char **argv)
     //       Modes:
     //          "seq" ... single threaded computation
     //          "omp" ... Use OpenMP
+    //          "ocl" ... Use OpenCL
     // Zusätzliche Optionen (nicht Teil der Aufgabe, aber zum Entwickeln praktisch)
     //  --verify VERIFYFILE # Vergleicht das Ergebnis mit einem File. Nützlich zum Testen
     //  --verbose
@@ -110,6 +111,10 @@ int Main::run(int argc, char **argv)
         return 1;
     }
     
+    if(arg_verbose) {
+        board.setVerbose(true);
+    }
+    
     //
     // Kernel run time
     //
@@ -123,6 +128,14 @@ int Main::run(int argc, char **argv)
 	else if (arg_mode == "openmp") {
 		board.runOpenMP(arg_generations);
 	}
+#endif
+#if USE_OPENCL
+    else if (arg_mode == "opencl") {
+        board.runOpenCL(arg_generations);
+//        for(int i=0; i<arg_generations; i++) {
+//            board.runOpenCL(1);
+//        }
+    }
 #endif
 	else {
 		fail("Internal error: unsupported mode " + arg_mode);
@@ -226,6 +239,11 @@ bool Main::parseArguments(int argc, char **argv) {
 			else if (arg_mode == "openmp") {
 				// Ok
 			}
+#endif
+#if USE_OPENCL
+            else if (arg_mode == "opencl") {
+                // Ok
+            }
 #endif
 			else {
 				cout << "Error: invalid mode param\n";

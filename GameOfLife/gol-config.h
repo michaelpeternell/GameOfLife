@@ -29,5 +29,6 @@
 #endif
 
 #define USE_OPENMP GOL_WIN_ONLY
+#define USE_OPENCL GOL_MAC_ONLY
 
 #endif // GameOfLife_gol_config_h

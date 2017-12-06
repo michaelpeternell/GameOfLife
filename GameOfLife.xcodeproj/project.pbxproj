@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C05C6F01FD853910002645E /* Board_opencl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C05C6EF1FD853910002645E /* Board_opencl.cpp */; };
+		4C05C6F21FD854170002645E /* gol_kernel.cl in Sources */ = {isa = PBXBuildFile; fileRef = 4C05C6F11FD854170002645E /* gol_kernel.cl */; };
+		4C05C6F31FD863C60002645E /* Board_opencl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C05C6EF1FD853910002645E /* Board_opencl.cpp */; };
+		4C05C6F41FD8646C0002645E /* gol_kernel.cl in Sources */ = {isa = PBXBuildFile; fileRef = 4C05C6F11FD854170002645E /* gol_kernel.cl */; };
 		4C27E4191FC83D1600A84076 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C27E4181FC83D1600A84076 /* main.cpp */; };
 		4C27E4211FC83DEB00A84076 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C27E4201FC83DE000A84076 /* OpenCL.framework */; };
 		4CEB22B41FD6E0A400FD5B69 /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB22B21FD6E0A400FD5B69 /* Board.cpp */; };
@@ -27,6 +31,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4C05C6EF1FD853910002645E /* Board_opencl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board_opencl.cpp; sourceTree = "<group>"; };
+		4C05C6F11FD854170002645E /* gol_kernel.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = gol_kernel.cl; sourceTree = "<group>"; };
 		4C27E4151FC83D1600A84076 /* GameOfLife */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GameOfLife; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C27E4181FC83D1600A84076 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4C27E4201FC83DE000A84076 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
@@ -79,8 +85,10 @@
 		4C27E4171FC83D1600A84076 /* GameOfLife */ = {
 			isa = PBXGroup;
 			children = (
+				4C05C6EF1FD853910002645E /* Board_opencl.cpp */,
 				4CEB22B21FD6E0A400FD5B69 /* Board.cpp */,
 				4CEB22B31FD6E0A400FD5B69 /* Board.h */,
+				4C05C6F11FD854170002645E /* gol_kernel.cl */,
 				4CFC49C31FD7F86B000E15B7 /* gol-config.h */,
 				4C27E4181FC83D1600A84076 /* main.cpp */,
 			);
@@ -193,6 +201,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C05C6F21FD854170002645E /* gol_kernel.cl in Sources */,
+				4C05C6F01FD853910002645E /* Board_opencl.cpp in Sources */,
 				4CEB22B41FD6E0A400FD5B69 /* Board.cpp in Sources */,
 				4C27E4191FC83D1600A84076 /* main.cpp in Sources */,
 			);
@@ -202,6 +212,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C05C6F41FD8646C0002645E /* gol_kernel.cl in Sources */,
+				4C05C6F31FD863C60002645E /* Board_opencl.cpp in Sources */,
 				4CEB22C11FD6F0B500FD5B69 /* Board.cpp in Sources */,
 				4CEB22BC1FD6F0AF00FD5B69 /* GameOfLifeTests.mm in Sources */,
 			);
@@ -258,7 +270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -307,7 +319,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
