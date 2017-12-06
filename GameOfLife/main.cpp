@@ -93,6 +93,7 @@ int Main::run(int argc, char **argv)
     //   --mode MODE        # Modus. Momentan wird nur "seq" unterstützt
     //       Modes:
     //          "seq" ... single threaded computation
+    //          "omp" ... Use OpenMP
     // Zusätzliche Optionen (nicht Teil der Aufgabe, aber zum Entwickeln praktisch)
     //  --verify VERIFYFILE # Vergleicht das Ergebnis mit einem File. Nützlich zum Testen
     //  --verbose
@@ -208,7 +209,15 @@ bool Main::parseArguments(int argc, char **argv) {
             myAssert(hasValue, "Missing argument after " + key);
             i++;
 
+            // Convert arg_mode to lowercase string
 			std::transform(arg_mode.begin(), arg_mode.end(), arg_mode.begin(), ::tolower);
+            
+            if(arg_mode == "omp") {
+                arg_mode = "openmp";
+            }
+            if(arg_mode == "ocl") {
+                arg_mode = "opencl";
+            }
 
 			if (arg_mode == "seq") {
 				// Ok

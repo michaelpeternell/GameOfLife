@@ -17,13 +17,15 @@ This is a command line tool (running on Windows and macOS.)
 
 ### Command line parameters:
 
-`--load FILENAME` .. file to load (see below for file format)<br>
-`--generations N` .. specify number of generations to calculate<br>
-`--save FILENAME` .. specify where the result should be saved to<br>
-`--verify FILENAME` .. for testing: after we finished calculating the generations, check that the resulting board is the same as the verification board given here. The result is printed to stdout.<br>
-`--mode seq|openmp|opencl` .. mode of operation. Currently only `seq` (single threaded) and `openmp` is supported. OpenMP is currently Win-only. (Default: `seq`)<br>
-`--verbose` .. Enable verbose mode<br>
-`--measure` .. Print time measurements at the end. Three times are printed: (1) the time it took to load the input file, (2) the time it took to calculate the generations, (3) the time it took to save the output file or to do the verification.
+| Parameter               | Description                      |
+| ----------------------- | -------------------------------- |
+| `--load FILENAME`       | file to load (see below for file format) |
+| `--generations N`       | specify number of generations to calculate |
+| `--save FILENAME`       | specify where the result should be saved to |
+| `--verify FILENAME`     | for testing: after we finished calculating the generations, check that the resulting board is the same as the verification board given here. The result is printed to stdout. |
+| `--mode seq|omp|ocl`    | Mode of operation. `seq` = "sequential", single-threaded operation. `omp` = `openmp` = Use OpenMP for parallelization. `ocl` = `opencl` = Use OpenCL. The Windows version currently supports `seq` and `omp`. The macOS version currently only supports `seq`. (Default: `seq`) |
+| `--verbose`             | Enable verbose mode              |
+| `--measure`             | Print time measurements at the end. Three times are printed: (1) the time it took to load the input file, (2) the time it took to calculate the generations, (3) the time it took to save the output file or to do the verification. |
 
 ### Example usage:
 
