@@ -3,7 +3,7 @@
 //  GameOfLife
 //
 //  Created by Michael Peternell on 06.12.2017.
-//  Copyright © 2017 Michael Peternell. All rights reserved.
+//  Copyright Â© 2017 Michael Peternell. All rights reserved.
 //
 
 #ifndef GameOfLife_gol_config_h
