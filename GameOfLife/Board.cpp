@@ -106,6 +106,12 @@ void Board::clearCell_unsafe(int row, int col) {
 	ptr[rBelowOffset + cRightOffset] -= 2;
 }
 
+void Board::nextGeneration()
+{
+    std::vector<char> oldCells = m_cells;
+    nextGeneration(&oldCells[0]);
+}
+
 void Board::nextGeneration(char* oldCells)
 {
     int idx = 0;

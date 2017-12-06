@@ -35,6 +35,7 @@
 		4CEB22B91FD6F0AF00FD5B69 /* GameOfLifeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameOfLifeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEB22BB1FD6F0AF00FD5B69 /* GameOfLifeTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GameOfLifeTests.mm; sourceTree = "<group>"; };
 		4CEB22BD1FD6F0AF00FD5B69 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CFC49C31FD7F86B000E15B7 /* gol-config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gol-config.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +81,7 @@
 			children = (
 				4CEB22B21FD6E0A400FD5B69 /* Board.cpp */,
 				4CEB22B31FD6E0A400FD5B69 /* Board.h */,
+				4CFC49C31FD7F86B000E15B7 /* gol-config.h */,
 				4C27E4181FC83D1600A84076 /* main.cpp */,
 			);
 			path = GameOfLife;
