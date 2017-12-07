@@ -161,27 +161,37 @@ void Board::runSingleThreaded(int numberOfGenerations) {
 }
 
 #if USE_OPENMP
-void Board::runOpenMP(int numberOfGenerations)
+void Board::runOpenMP(int numberOfGenerations, int numberOfThreads)
 {
-	const int NumberOfThreads = 4;
+	if (numberOfGenerations <= 0) {
+		return;
+	}
 
-	if (m_rowCount < (NumberOfThreads*3+2)) {
+	if (m_rowCount < 10) {
+		printf("Warning: Refusing to run OpenMP for a board that has less than 10 rows.\n"
+			"This board has %d rows and %d columns. Silently running single-threaded instead.\n", m_rowCount, m_colCount);
 		runSingleThreaded(numberOfGenerations);
 		return;
+	}
+
+	if (m_rowCount < (numberOfThreads*3 + 2)) {
+		int newNumberOfThreads = m_rowCount / 4;
+		printf("Warning: Refusing to run OpenMP with %d threads when having just %d rows. Will use %d threads instead.\n", numberOfThreads, newNumberOfThreads);
+		numberOfThreads = newNumberOfThreads;
 	}
 
 	std::vector<int> slicesBegin;
 	std::vector<int> slicesEnd;
 	std::vector<int> edgeRows;
 
-	for (int i = 0; i < NumberOfThreads; i++) {
-		slicesBegin.push_back(m_rowCount * i / NumberOfThreads + 2);
+	for (int i = 0; i < numberOfThreads; i++) {
+		slicesBegin.push_back(m_rowCount * i / numberOfThreads + 2);
 	}
-	for (int i = 0; i < NumberOfThreads-1; i++) {
+	for (int i = 0; i < numberOfThreads -1; i++) {
 		slicesEnd.push_back(slicesBegin[i + 1] - 2);
 	}
 	slicesEnd.push_back(m_rowCount);
-	for (int i = 0; i < NumberOfThreads; i++) {
+	for (int i = 0; i < numberOfThreads; i++) {
 		int row = slicesBegin[i];
 		edgeRows.push_back(row - 2);
 		edgeRows.push_back(row - 1);
@@ -195,7 +205,7 @@ void Board::runOpenMP(int numberOfGenerations)
 		}
 
 		#pragma omp parallel for
-		for (int i = 0; i < NumberOfThreads; i++) {
+		for (int i = 0; i < numberOfThreads; i++) {
 			nextGeneration(&oldCells[0], slicesBegin[i], slicesEnd[i]);
 		}
 

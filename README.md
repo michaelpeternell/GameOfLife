@@ -24,6 +24,7 @@ This is a command line tool (running on Windows and macOS.)
 | `--save FILENAME`       | specify where the result should be saved to |
 | `--verify FILENAME`     | for testing: after we finished calculating the generations, check that the resulting board is the same as the verification board given here. The result is printed to stdout. |
 | `--mode seq/omp/ocl`    | Mode of operation. `seq` = "sequential", single-threaded operation. `omp` = `openmp` = Use OpenMP for parallelization. `ocl` = `opencl` = Use OpenCL. The Windows version currently supports `seq` and `omp`. The macOS version currently only supports `seq` and `ocl`. (Default: `seq`) |
+| `--threads T`           | Specify number of threads to use. Only valid for OpenMP mode. Defaults to 4. |
 | `--verbose`             | Enable verbose mode              |
 | `--measure`             | Print time measurements at the end. Three times are printed: (1) the time it took to load the input file, (2) the time it took to calculate the generations, (3) the time it took to save the output file or to do the verification. |
 

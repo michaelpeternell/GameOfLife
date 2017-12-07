@@ -31,7 +31,7 @@ public:
     void runSingleThreaded(int numberOfGenerations);
 
 #if USE_OPENMP
-	void runOpenMP(int numberOfGenerations);
+	void runOpenMP(int numberOfGenerations, int numberOfThreads);
 #endif
     
 #if USE_OPENCL

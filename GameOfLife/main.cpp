@@ -67,6 +67,7 @@ private:
     string arg_verify;
     string arg_mode = "seq";
     int arg_generations = -1;
+    int arg_threads = 4;
     bool arg_measure = false;
     bool arg_verbose = false;
     
@@ -95,6 +96,7 @@ int Main::run(int argc, char **argv)
     //          "seq" ... single threaded computation
     //          "omp" ... Use OpenMP
     //          "ocl" ... Use OpenCL
+    //   --threads T        # Für OpenMP: Anzahl der zu benutzenden Threads. (Default: 4)
     // Zusätzliche Optionen (nicht Teil der Aufgabe, aber zum Entwickeln praktisch)
     //  --verify VERIFYFILE # Vergleicht das Ergebnis mit einem File. Nützlich zum Testen
     //  --verbose
@@ -121,13 +123,13 @@ int Main::run(int argc, char **argv)
     
     timeStartKernelRunPhase = high_resolution_clock::now();
     
-	if (arg_mode == "seq") {
-		board.runSingleThreaded(arg_generations);
-	}
+    if (arg_mode == "seq") {
+        board.runSingleThreaded(arg_generations);
+    }
 #if USE_OPENMP
-	else if (arg_mode == "openmp") {
-		board.runOpenMP(arg_generations);
-	}
+    else if (arg_mode == "openmp") {
+        board.runOpenMP(arg_generations, arg_threads);
+    }
 #endif
 #if USE_OPENCL
     else if (arg_mode == "opencl") {
@@ -137,9 +139,9 @@ int Main::run(int argc, char **argv)
 //        }
     }
 #endif
-	else {
-		fail("Internal error: unsupported mode " + arg_mode);
-	}
+    else {
+        fail("Internal error: unsupported mode " + arg_mode);
+    }
     
     
     //
@@ -185,6 +187,8 @@ int Main::run(int argc, char **argv)
 }
 
 bool Main::parseArguments(int argc, char **argv) {
+    bool has_threads_arg = false;
+    int errorCount = 0;
     for (int i = 1; i < argc; i++) {
         string key = argv[i];
         string val;
@@ -223,7 +227,7 @@ bool Main::parseArguments(int argc, char **argv) {
             i++;
 
             // Convert arg_mode to lowercase string
-			std::transform(arg_mode.begin(), arg_mode.end(), arg_mode.begin(), ::tolower);
+            std::transform(arg_mode.begin(), arg_mode.end(), arg_mode.begin(), ::tolower);
             
             if(arg_mode == "omp") {
                 arg_mode = "openmp";
@@ -232,29 +236,44 @@ bool Main::parseArguments(int argc, char **argv) {
                 arg_mode = "opencl";
             }
 
-			if (arg_mode == "seq") {
-				// Ok
-			}
+            if (arg_mode == "seq") {
+                // Ok
+            }
 #if USE_OPENMP
-			else if (arg_mode == "openmp") {
-				// Ok
-			}
+            else if (arg_mode == "openmp") {
+                // Ok
+            }
 #endif
 #if USE_OPENCL
             else if (arg_mode == "opencl") {
                 // Ok
             }
 #endif
-			else {
-				cout << "Error: invalid mode param\n";
-				return false;
-			}
+            else {
+                cout << "Error: invalid mode param\n";
+                sayError("Error: invalid mode param");
+                errorCount++;
+            }
         }
         else if (key == "--measure") {
             arg_measure = true;
         }
         else if (key == "--verbose") {
             arg_verbose = true;
+        }
+        else if (key == "--threads") {
+            string tStr = val;
+            myAssert(hasValue, "Missing argument after " + key);
+            i++;
+
+            arg_threads = atoi(tStr.c_str());
+            if (arg_threads < 1) {
+                sayError("Invalid value for --thread argument");
+                errorCount++;
+            }
+            else {
+                has_threads_arg = true;
+            }
         }
         else {
             sayWarning("Warning: unknown command line argument parameter '" + key + "'");
@@ -263,6 +282,14 @@ bool Main::parseArguments(int argc, char **argv) {
     
     if (arg_load == "") {
         sayError("Please specify a file to --load.");
+        return false;
+    }
+
+    if (arg_mode != "openmp" && has_threads_arg) {
+        return false;
+    }
+
+    if (errorCount > 0) {
         return false;
     }
     
