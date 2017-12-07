@@ -31,7 +31,7 @@ public:
     void runSingleThreaded(int numberOfGenerations);
 
 #if USE_OPENMP
-	void runOpenMP(int numberOfGenerations, int numberOfThreads);
+    void runOpenMP(int numberOfGenerations, int numberOfThreads);
 #endif
     
 #if USE_OPENCL
@@ -48,11 +48,11 @@ public:
 private:
     bool m_verbose = false;
     
-	/// Runs on a slice of the data. Slicing is for OpenMP.
-	void nextGeneration(char* oldCells, int rowBegin, int rowEnd);
+    /// Runs on a slice of the data. Slicing is for OpenMP.
+    void nextGeneration(char* oldCells, int rowBegin, int rowEnd);
 
-	/// Sets cell to 'alive', assuming its dead
-	void setCell_unsafe(int row, int col);
+    /// Sets cell to 'alive', assuming its dead
+    void setCell_unsafe(int row, int col);
     /// Sets cell to 'dead', assuming its alive
     void clearCell_unsafe(int row, int col);
     
@@ -64,14 +64,14 @@ private:
     int m_colCount = 0;
     std::vector<char> m_cells;
 
-	// About the memory layout:
-	// Each element (char) of m_cells represents one cell on the board.
-	// The lowest bit says if the cell is 'alive'.
-	// Bits 1-4 is the neighbour-count. It says how many neighbours a cell has.
-	// E.g. 000001001
-	//      ........1 => cell is alive
-	//      ....0100. => it has 4 neighbours
-	// => the cell will die in the next generation because it is alive and has more than 3 neighbours.
+    // About the memory layout:
+    // Each element (char) of m_cells represents one cell on the board.
+    // The lowest bit says if the cell is 'alive'.
+    // Bits 1-4 is the neighbour-count. It says how many neighbours a cell has.
+    // E.g. 000001001
+    //      ........1 => cell is alive
+    //      ....0100. => it has 4 neighbours
+    // => the cell will die in the next generation because it is alive and has more than 3 neighbours.
 };
 
 bool operator==(const Board& b1, const Board& b2);
