@@ -66,8 +66,9 @@ private:
     string arg_save;
     string arg_verify;
     string arg_mode = "seq";
+    string arg_device; // for OpenCL
     int arg_generations = -1;
-    int arg_threads = 4;
+    int arg_threads = 4; // for OpenMP
     bool arg_measure = false;
     bool arg_verbose = false;
     
@@ -97,6 +98,7 @@ int Main::run(int argc, char **argv)
     //          "omp" ... Use OpenMP
     //          "ocl" ... Use OpenCL
     //   --threads T        # Für OpenMP: Anzahl der zu benutzenden Threads. (Default: 4)
+    //   --device cpu|gpu   # Für OpenCL: Welches Device benutzen? (Default: GPU, but fallback to CPU)
     // Zusätzliche Optionen (nicht Teil der Aufgabe, aber zum Entwickeln praktisch)
     //  --verify VERIFYFILE # Vergleicht das Ergebnis mit einem File. Nützlich zum Testen
     //  --verbose
@@ -133,10 +135,13 @@ int Main::run(int argc, char **argv)
 #endif
 #if USE_OPENCL
     else if (arg_mode == "opencl") {
-        board.runOpenCL(arg_generations);
-//        for(int i=0; i<arg_generations; i++) {
-//            board.runOpenCL(1);
-//        }
+        Board::OpenCLDeviceType dType = Board::DEVICE_TYPE_DONT_CARE;
+        if(arg_device == "gpu") {
+            dType = Board::DEVICE_TYPE_GPU_ONLY;
+        } else if(arg_device == "cpu") {
+            dType = Board::DEVICE_TYPE_CPU_ONLY;
+        }
+        board.runOpenCL(arg_generations, dType);
     }
 #endif
     else {
@@ -275,6 +280,19 @@ bool Main::parseArguments(int argc, char **argv) {
                 has_threads_arg = true;
             }
         }
+        else if (key == "--device") {
+            string dStr = val;
+            myAssert(hasValue, "Missing argument after " + key);
+            i++;
+            
+            if(dStr == "cpu" || dStr == "gpu") {
+                // OK
+                arg_device = dStr;
+            } else {
+                sayError("Invalid value for --device argument");
+                errorCount++;
+            }
+        }
         else {
             sayWarning("Warning: unknown command line argument parameter '" + key + "'");
         }
@@ -287,6 +305,11 @@ bool Main::parseArguments(int argc, char **argv) {
 
     if (arg_mode != "openmp" && has_threads_arg) {
         sayError("Argument --threads is only valid when using OpenMP");
+        return false;
+    }
+    
+    if (arg_device.length() > 0 && arg_mode != "opencl") {
+        sayError("Argument --device is only valid when using OpenCL");
         return false;
     }
 

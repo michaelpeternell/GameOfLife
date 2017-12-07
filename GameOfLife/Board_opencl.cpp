@@ -23,7 +23,7 @@ static cl_ndrange makeRange(int size)
     };
 }
 
-void Board::runOpenCL(int numberOfGenerations)
+void Board::runOpenCL(int numberOfGenerations, OpenCLDeviceType deviceType)
 {
     // OpenCL code based on example code from Apple:
     // https://developer.apple.com/library/content/documentation/Performance/Conceptual/OpenCL_MacProgGuide/ExampleHelloWorld/Example_HelloWorld.html#//apple_ref/doc/uid/TP40008312-CH112-SW2
@@ -39,18 +39,27 @@ void Board::runOpenCL(int numberOfGenerations)
         return;
     }
     
+    dispatch_queue_t queue = NULL;
+    
     int size = (int)m_cells.size();
     
     char deviceName[128];
     
     // First, try to obtain a dispatch queue that can send work to the
     // GPU in our system.
-    dispatch_queue_t queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, NULL);
+    if(deviceType == DEVICE_TYPE_DONT_CARE || deviceType == DEVICE_TYPE_GPU_ONLY) {
+        queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, NULL);
+        if(queue == NULL && deviceType == DEVICE_TYPE_GPU_ONLY) {
+            throw std::runtime_error("OpenCL: Cannot find GPU device");
+        }
+    }
     
     // In the event that our system does NOT have an OpenCL-compatible GPU,
     // we can use the OpenCL CPU compute device instead.
     if (queue == NULL) {
-        printf("OpenCL: Didn't find GPU device. Falling back to GPU\n");
+        if(deviceType != DEVICE_TYPE_CPU_ONLY) {
+            printf("OpenCL: Didn't find GPU device. Falling back to GPU\n");
+        }
         queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_CPU, NULL);
     }
     

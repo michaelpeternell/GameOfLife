@@ -41,8 +41,14 @@ public:
     void runOpenMP(int numberOfGenerations, int numberOfThreads);
 #endif
     
+    enum OpenCLDeviceType {
+        DEVICE_TYPE_DONT_CARE,
+        DEVICE_TYPE_CPU_ONLY,
+        DEVICE_TYPE_GPU_ONLY
+    };
+    
 #if USE_OPENCL
-    void runOpenCL(int numberOfGenerations);
+    void runOpenCL(int numberOfGenerations, OpenCLDeviceType deviceType);
 #endif
     
     std::string toString() const;
