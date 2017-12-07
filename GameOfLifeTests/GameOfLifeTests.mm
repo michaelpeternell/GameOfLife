@@ -174,11 +174,10 @@
         printf("b1 = %s\n", b1.toString().c_str());
     }
     XCTAssert(b1 == b2);
-    /*
     b1.runOpenCL(2);
     XCTAssert(b1 == b2);
     b1.runOpenCL(20);
-    XCTAssert(b1 == b2);*/
+    XCTAssert(b1 == b2);
     
     b1.setCell(0, 0, false);
     b1.runOpenCL(1);
@@ -261,7 +260,7 @@ static Board diffBoards(const Board& b1, const Board& b2) {
     b2.runOpenCL(51);
     if(b1 != b2) {
         Board diff = diffBoards(b1, b2);
-        printf("b1 and b2 differ (4-gen). Difference: %s\n", diff.toString().c_str());
+        printf("b1 and b2 differ (51-gen). Difference: %s\n", diff.toString().c_str());
     }
     XCTAssert(b1 == b2);
 }

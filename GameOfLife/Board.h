@@ -15,18 +15,25 @@
 #include <string>
 
 
+/// A "Game of Life" board. The board is not infinite, but it is wrap-around, i.e.
+/// cells that fall out on the left side come in on the right side, etc.
+/// @see https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 class Board
 {
 public:
+    /// Creates an empty (useless) board with zero size.
     Board() = default;
+    /// Creates an empty board of a particular size
     Board(int rowCount, int colCount);
     
     inline int getRowCount() const { return m_rowCount; }
     inline int getColCount() const { return m_colCount; }
     
+    /// @return true if the cell is alive, false otherwise.
     inline bool getCell(int row, int col) const { return m_cells[row*m_colCount + col] & 1; };
-    void setCell(int row, int col, bool val);
+    void setCell(int row, int col, bool isAlive);
     
+    /// Calculates the next generation. (Single-threaded, on the CPU.)
     void nextGeneration();
     void runSingleThreaded(int numberOfGenerations);
 

@@ -28,6 +28,10 @@ void Board::runOpenCL(int numberOfGenerations)
     // OpenCL code based on example code from Apple:
     // https://developer.apple.com/library/content/documentation/Performance/Conceptual/OpenCL_MacProgGuide/ExampleHelloWorld/Example_HelloWorld.html#//apple_ref/doc/uid/TP40008312-CH112-SW2
     
+    if(numberOfGenerations <= 0) {
+        return;
+    }
+    
     if(m_rowCount < 5 || m_colCount < 5) {
         printf("Warning: Refusing to run OpenCL for a board that has less than 5 rows or less than 5 columns.\n"
                "This board has %d rows and %d columns. Silently running single-threaded instead.\n", m_rowCount, m_colCount);

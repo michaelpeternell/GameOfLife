@@ -176,7 +176,7 @@ void Board::runOpenMP(int numberOfGenerations, int numberOfThreads)
 
     if (m_rowCount < (numberOfThreads*3 + 2)) {
         int newNumberOfThreads = m_rowCount / 4;
-        printf("Warning: Refusing to run OpenMP with %d threads when having just %d rows. Will use %d threads instead.\n", numberOfThreads, newNumberOfThreads);
+        printf("Warning: Refusing to run OpenMP with %d threads when having just %d rows. Will use %d threads instead.\n", numberOfThreads, m_rowCount, newNumberOfThreads);
         numberOfThreads = newNumberOfThreads;
     }
 

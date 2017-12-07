@@ -286,6 +286,7 @@ bool Main::parseArguments(int argc, char **argv) {
     }
 
     if (arg_mode != "openmp" && has_threads_arg) {
+        sayError("Argument --threads is only valid when using OpenMP");
         return false;
     }
 

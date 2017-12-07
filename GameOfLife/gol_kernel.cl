@@ -1,4 +1,26 @@
 
+// For OpenCL purposes, a Game Of Life board is represented as a contiguous
+// array of booleans. (Each boolean represented by an unsigned char (8 bit))
+// Each row in the board is a contiguous memory area of size colCount. The cell
+// with row = Y and column = X has the index = Y*colCount + X.
+// Each boolean value is true if the cell is alive and false otherwise.
+
+// Each function on this file operates on "inputData" and "outputData".
+// The functions only read from "inputData" and never write to it.
+// The functions only write to "outputData" and never read to it.
+// There can be no race condition during the calculation of a generation.
+
+// The input board is always represented with the arguments "inputData",
+// "rowCount" and "colCount". The output board (where results are saved to)
+// is represented by "outputData", "rowCount" and "colCount".
+
+// Each function in this file (except gol_rw_barrier) reads from the input board
+// and writes to the output board. For kernel methods, the index to use is always
+// derived from the global ID ( get_global_id(0) ). OpenCL-wise, a board is
+// only 1-dimensional.
+
+/// Calculates the alive state for the cell given by 'idx'.
+/// This function is comparatively slow and is only used for edge cases.
 void gol_do_slow(global uchar* inputData, global uchar* outputData, int rowCount, int colCount, size_t idx)
 {
     int row = idx / colCount;
@@ -41,6 +63,12 @@ void gol_do_slow(global uchar* inputData, global uchar* outputData, int rowCount
     }
 }
 
+/// Calculates the alive state of a group of cells.
+/// Most cell alive states are calculated with this function. It cannot calculate
+/// the alive states of cells at the borders of the board because it doesn't
+/// implement coordinate wraparound (for performance reasons.)
+/// @param groupSize Number of cells to compute with one function call.
+///        The cells are next to each other on the same row.
 kernel void gol_next_group(global uchar* inputData, global uchar* outputData, int rowCount, int colCount, int groupSize)
 {
     size_t what = get_global_id(0);
@@ -48,6 +76,8 @@ kernel void gol_next_group(global uchar* inputData, global uchar* outputData, in
     int groupsPerCol = (colCount-2)/groupSize;
     int row = what / groupsPerCol + 1;
     int col = (what - (row-1)*groupsPerCol) * groupSize + 1;
+    
+    // Variables a-i describe a 3*3 kernel of cell values.
     
     // a b c
     // d e f
@@ -84,6 +114,8 @@ kernel void gol_next_group(global uchar* inputData, global uchar* outputData, in
         
         orange++;
         
+        // Move the 3*3 kernel one step to the right
+        
         cIdx++;
         eIdx++;
         fIdx++;
@@ -101,6 +133,7 @@ kernel void gol_next_group(global uchar* inputData, global uchar* outputData, in
     }
 }
 
+/// Calculates alive state for the first and last row in a board
 kernel void gol_next_updown(global uchar* inputData, global uchar* outputData, int rowCount, int colCount)
 {
     size_t what = get_global_id(0);
@@ -112,6 +145,7 @@ kernel void gol_next_updown(global uchar* inputData, global uchar* outputData, i
     }
 }
 
+/// Calculates alive state for a particular col
 kernel void gol_next_col(global uchar* inputData, global uchar* outputData, int rowCount, int colCount, int col)
 {
     size_t row = get_global_id(0);
@@ -119,6 +153,10 @@ kernel void gol_next_col(global uchar* inputData, global uchar* outputData, int 
     gol_do_slow(inputData, outputData, rowCount, colCount, idx);
 }
 
+/// Issue a full memory barrier. Necessary since these kernels are used with
+/// some kind of double buffering.
+/// OpenCL doesn't like kernel functions without arguments, so we will declare
+/// some dummy unused arguments.
 kernel void gol_rw_barrier(global uchar* inputData, global uchar* outputData)
 {
     barrier(CLK_GLOBAL_MEM_FENCE);
