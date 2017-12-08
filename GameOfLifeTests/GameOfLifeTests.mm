@@ -169,18 +169,18 @@
     b1.setCell(1, 5, true);
     b2 = b1;
     
-    b1.runOpenCL(1);
+    b1.runOpenCL(1, Board::DEVICE_TYPE_DONT_CARE);
     if(b1 != b2) {
         printf("b1 = %s\n", b1.toString().c_str());
     }
     XCTAssert(b1 == b2);
-    b1.runOpenCL(2);
+    b1.runOpenCL(2, Board::DEVICE_TYPE_DONT_CARE);
     XCTAssert(b1 == b2);
-    b1.runOpenCL(20);
+    b1.runOpenCL(20, Board::DEVICE_TYPE_DONT_CARE);
     XCTAssert(b1 == b2);
     
     b1.setCell(0, 0, false);
-    b1.runOpenCL(1);
+    b1.runOpenCL(1, Board::DEVICE_TYPE_DONT_CARE);
     if(b1 != b2) {
         printf("b1 = %s\n", b1.toString().c_str());
     }
@@ -222,7 +222,7 @@ static Board diffBoards(const Board& b1, const Board& b2) {
     Board b2 = randomBoard;
     
     b1.runSingleThreaded(1);
-    b2.runOpenCL(1);
+    b2.runOpenCL(1, Board::DEVICE_TYPE_DONT_CARE);
     if(b1 != b2) {
         Board diff = diffBoards(b1, b2);
         printf("b1 and b2 differ. Difference: %s\n", diff.toString().c_str());
@@ -232,7 +232,7 @@ static Board diffBoards(const Board& b1, const Board& b2) {
     b1 = randomBoard;
     b2 = randomBoard;
     b1.runSingleThreaded(4);
-    b2.runOpenCL(4);
+    b2.runOpenCL(4, Board::DEVICE_TYPE_DONT_CARE);
     if(b1 != b2) {
         Board diff = diffBoards(b1, b2);
         printf("b1 and b2 differ (4-gen). Difference: %s\n", diff.toString().c_str());
@@ -247,7 +247,7 @@ static Board diffBoards(const Board& b1, const Board& b2) {
     Board b2 = randomBoard;
     
     b1.runSingleThreaded(1);
-    b2.runOpenCL(1);
+    b2.runOpenCL(1, Board::DEVICE_TYPE_DONT_CARE);
     if(b1 != b2) {
         Board diff = diffBoards(b1, b2);
         printf("b1 and b2 differ. Difference: %s\n", diff.toString().c_str());
@@ -257,7 +257,7 @@ static Board diffBoards(const Board& b1, const Board& b2) {
     b1 = randomBoard;
     b2 = randomBoard;
     b1.runSingleThreaded(51);
-    b2.runOpenCL(51);
+    b2.runOpenCL(51, Board::DEVICE_TYPE_DONT_CARE);
     if(b1 != b2) {
         Board diff = diffBoards(b1, b2);
         printf("b1 and b2 differ (51-gen). Difference: %s\n", diff.toString().c_str());
